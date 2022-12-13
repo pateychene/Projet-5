@@ -55,13 +55,6 @@ function getOneProduct(produit){
   
 }
 
-/*function chooseSpecificColor(produit){
-    for (let colors of produit.colors){
-        chooseSpecificColor.innerHTML += `<option value="${colors}">${colors}</option>`;
-    }
-}
-console.log(chooseSpecificColor);
-
 /*Choisir la quantite de produit possible */
 
 var quantiteProduit = 1 ;
@@ -73,62 +66,59 @@ if (quantiteProduit <= 100){
 
 //Récupération 
 function recuperationDonnee(){
-    /* Vérifier les données saisies (1 < qte < 100)
-    
-, */
+
+    /* Vérifier les données saisies (1 < qte < 100)*/
+     
      let couleurChoisie = document.getElementById("colors").value ;
      let quantiteChoisie = document.getElementById("quantity").value ;
-/*
-     console.log("couleurChoisie : " +couleurChoisie);
-     console.log("quantiteChoisie : " +quantiteChoisie)
-     console.log("idProduit : " + newId);
-     */
-     // 1 - Récupérer et formater le produit sélectionné.
-     let selectedProduct = {
-         idProduit : newId,
-         quantite : quantiteChoisie,
-         couleur : couleurChoisie
-     }
-     console.log(selectedProduct);
 
 
-    //1-1 - Récupérer les tableau de  produits dejà stockés (s'ils existent )
+     //Tester la quantité et la couleur avant de continuer
 
-    let panierClient = JSON.parse(localStorage.getItem("panierClient"));
+     if(quantiteChoisie <1 || quantiteChoisie>100 ){
+         alert("Veuillez saisir une quantité comprise entre 1 et 100");
+     }else if( couleurChoisie == "" || couleurChoisie == null ){
+        alert("Veuillez choisir une couleur");
+     }else {
+        // 1 - Récupérer et formater le produit sélectionné.
+        let selectedProduct = {
+            idProduit : newId,
+            quantite : parseInt(quantiteChoisie),
+            couleur : couleurChoisie
+        }
+        console.log(selectedProduct);
+        //1-1 - Récupérer les tableau de  produits dejà stockés (s'ils existent )
+        let panierClient = JSON.parse(localStorage.getItem("panierClient"));
+        //1-2 - Vérifier s'il existe un produit dans le tableau récupérer
+        if(panierClient == null ){
+            panierClient = [] ;
+        }
+        //1-3 - Vérifier si un produit  avec la  même couleur exisite déjà dans le panier.
+        // si OUI, incrémente la quantité 
+        // si NON, rajoute le nouveau produit dans le panier
+        console.log(panierClient);
+        let produitExisteDejaDansLePanier = panierClient.find((elementCourantDuPanier) =>  elementCourantDuPanier.idProduit == newId 
+        &&  elementCourantDuPanier.couleur == couleurChoisie ) ;
 
-    //1-2 - Vérifier s'il existe un produit dans le tableau récupérer
-
-    if(panierClient == null ){
-        panierClient = [] ;
-    }
-
-
-    //1-3 - Vérifier si un produit  avec la  même couleur exisite déjà dans le panier.
-    // si OUI, incrément la quantité 
-    // si NON, rajoute le nouveau produit dans le panier
-
-    console.log(panierClient);
-
-    let produitExisteDejaDansLePanier =  panierClient.find((elementCourantDuPanier) => 
-            elementCourantDuPanier.idProduit == selectedProduct.idProduit 
-            &&  
-            elementCourantDuPanier.couleur == selectedProduct.couleur
-        ) ;
     
-        if(produitExisteDejaDansLePanier){
-            let quntiteIncremente = parseInt(selectedProduct.quantite) + parseInt(produitExisteDejaDansLePanier.quantite) ;
-            produitExisteDejaDansLePanier.quantite = quntiteIncremente ;
-            localStorage.setItem("panierClient",JSON.stringify(produitExisteDejaDansLePanier))
-           // alert("Ce produit existe déjà dans le panier, sa quantité a été incrémenté de la nouvelle quantité") ;
-        }else{
-            panierClient.push(selectedProduct);
-            localStorage.setItem("panierClient",JSON.stringify(panierClient));  
-           // alert("Votre nouveau produit a été rajouté au panier ") ;
-           // window.location.href = `cart.html`
+            if(produitExisteDejaDansLePanier){
+                let quntiteIncremente = parseInt(selectedProduct.quantite) + parseInt(produitExisteDejaDansLePanier.quantite) ;
 
-            //Redirrigé vers la page panier.
+                
+                console.log("nouvelle quantité : "+quntiteIncremente)
+                produitExisteDejaDansLePanier.quantite = quntiteIncremente ;
 
-}
+                localStorage.setItem("panierClient",JSON.stringify(panierClient))
+                 alert("Ce produit existe déjà dans le panier, sa quantité a été incrémenté de la nouvelle quantité") ;
+                 window.location.href = `cart.html`
+            }else{
+                panierClient.push(selectedProduct);
+                localStorage.setItem("panierClient",JSON.stringify(panierClient));  
+                alert("Votre nouveau produit a été rajouté au panier ") ;
+                window.location.href = `cart.html`
+                //Redirrigé vers la page panier.
+        }
+    }
 }
 
 let buttonValider = document.getElementById("addToCart");
